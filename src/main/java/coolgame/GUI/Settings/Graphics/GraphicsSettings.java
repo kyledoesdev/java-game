@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GraphicsSettings {
-    public static void applyDimension(int dimensionIndex) {
+    public static void changeScreenSize(int dimensionIndex) {
         ScreenSizesEnum screenSizesEnum = ScreenSizesEnum.fromIndex(dimensionIndex);
         Dimension dimension = screenSizesEnum.getDimension();
 
@@ -17,27 +17,21 @@ public class GraphicsSettings {
         SettingsManager.getInstance().setSetting("width", dimension.width);
         SettingsManager.getInstance().setSetting("height", dimension.height);
 
-        // Apply settings
-        JFrame mainFrame = Window.getInstance().getMainFrame();
-        mainFrame.setSize(dimension);
-        mainFrame.setLocationRelativeTo(null); // Center the window
-        mainFrame.validate(); // Refresh the layout
+        //Perform update
+        Window.getInstance().getWindow().setSize(dimension);
+
+        applyChangedSettings();
     }
 
-    public static void applyFullscreen(boolean isFullscreen) {
-        JFrame mainFrame = Window.getInstance().getMainFrame();
-
-        // Update settings
+    public static void toggleFullScreen(boolean isFullscreen) {
+        // Save Change & purge window.
         SettingsManager.getInstance().setSetting("is_fullscreen", isFullscreen);
-
-        // Apply fullscreen settings
-        mainFrame.dispose(); // Dispose current frame
-
-        mainFrame.setUndecorated(isFullscreen);
+        Window.getInstance().getWindow().dispose();
+        Window.getInstance().getWindow().setUndecorated(isFullscreen);
 
         if (! isFullscreen) {
-            mainFrame.setExtendedState(JFrame.NORMAL);
-            ScreenSizesEnum screenSizesEnum = ScreenSizesEnum.fromDimension(
+            Window.getInstance().getWindow().setExtendedState(JFrame.NORMAL);
+            ScreenSizesEnum newSize = ScreenSizesEnum.fromDimension(
                 new Dimension(
                     SettingsManager.getInstance().getSetting("width") != null
                         ? SettingsManager.getInstance().getSetting("width").getAsInt()
@@ -48,12 +42,10 @@ public class GraphicsSettings {
                 )
             );
 
-            Dimension size = screenSizesEnum != null
-                ? screenSizesEnum.getDimension()
-                : new Dimension(1280, 720);
-            mainFrame.setSize(size);
+            Window.getInstance().getWindow()
+                .setSize(newSize != null ? newSize.getDimension() : new Dimension(1280, 720));
         } else {
-            mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            Window.getInstance().getWindow().setExtendedState(JFrame.MAXIMIZED_BOTH);
 
             //update text in dropdown box to the max resolution because we are not full screen.
             SettingsScene.getInstance()
@@ -61,8 +53,12 @@ public class GraphicsSettings {
                 .setSelectedIndex(ScreenSizesEnum.getMax().ordinal());
         }
 
-        mainFrame.setVisible(true);
-        mainFrame.setLocationRelativeTo(null);
-        mainFrame.validate();
+        applyChangedSettings();
+    }
+
+    private static void applyChangedSettings() {
+        Window.getInstance().getWindow().setVisible(true);
+        Window.getInstance().getWindow().setLocationRelativeTo(null);
+        Window.getInstance().getWindow().validate();
     }
 }

@@ -30,7 +30,7 @@ public class SettingsManager {
         try (InputStream inputStream = new FileInputStream(SETTINGS_FILE)) {
             this.settings = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
         } catch (Exception e) {
-            Window.getInstance().getMainFrame().dispose();
+            Window.getInstance().getWindow().dispose();
             System.exit(404);
         }
     }

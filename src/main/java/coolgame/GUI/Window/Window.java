@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class Window {
     private static Window instance;
-    private static JFrame mainFrame;
+    private static JFrame window;
 
     private Window() {}
 
@@ -20,28 +20,30 @@ public class Window {
     }
 
     public static void boot() {
-        mainFrame = new JFrame("Capyblappy Game");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setLocationRelativeTo(null);
-        mainFrame.setUndecorated(false);
+        window = new JFrame("Capyblappy Game");
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setLocationRelativeTo(null);
+        window.setUndecorated(false);
+        window.setResizable(false);
 
-        mainFrame.setSize(
+        window.setSize(
             SettingsManager.getInstance().getSetting("width").getAsInt(),
             SettingsManager.getInstance().getSetting("height").getAsInt()
         );
 
-        mainFrame.getContentPane().setBackground(new Color(173, 216, 230)); // Light blue background
+        //TODO - color picker setting
+        window.getContentPane().setBackground(new Color(173, 216, 230)); // Light blue background
 
-        mainFrame.setVisible(true);
+        window.setVisible(true);
     }
 
-    public JFrame getMainFrame() {
-        return mainFrame;
+    public static void changeScene(Container contentPane) {
+        window.setContentPane(contentPane);
+        window.revalidate();
+        window.repaint();
     }
 
-    public static void setContentPane(Container contentPane) {
-        mainFrame.setContentPane(contentPane);
-        mainFrame.revalidate();
-        mainFrame.repaint();
+    public JFrame getWindow() {
+        return window;
     }
 }

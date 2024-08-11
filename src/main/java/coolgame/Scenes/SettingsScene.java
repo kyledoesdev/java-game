@@ -27,34 +27,34 @@ public class SettingsScene extends Scene {
 
     @Override
     public void setup() {
-        JPanel settingsPanel = new JPanel(null);
+        JPanel settingsScene = new JPanel(null);
 
         resolutionDropdown = new Dropdown(new String[] {
             "640x480","800x600","1280x720", "1600x900", "1920x1080"
         });
 
         resolutionDropdown.setBounds(50, 90, 150, 30);
-        settingsPanel.add(resolutionDropdown.getComponent());
+        settingsScene.add(resolutionDropdown.getComponent());
         this.setDropdownSelection();
 
         JCheckBox fullscreenCheckBox = new JCheckBox("Fullscreen");
         fullscreenCheckBox.setBounds(50, 50, 150, 30);
-        settingsPanel.add(fullscreenCheckBox);
+        settingsScene.add(fullscreenCheckBox);
 
         Button applyButton = new Button("Apply");
         applyButton.setBounds(250, 90, 100, 30);
         applyButton.addActionListener(e -> {
-            GraphicsSettings.applyDimension(resolutionDropdown.getSelectedIndex());
-            GraphicsSettings.applyFullscreen(fullscreenCheckBox.isSelected());
+            GraphicsSettings.changeScreenSize(resolutionDropdown.getSelectedIndex());
+            GraphicsSettings.toggleFullScreen(fullscreenCheckBox.isSelected());
         });
-        settingsPanel.add(applyButton.getComponent());
+        settingsScene.add(applyButton.getComponent());
 
         Button backButton = new Button("Back");
-        backButton.setBounds(50, 130, 100, 30);
+        backButton.setBounds(50, 150, 100, 30);
         backButton.addActionListener(e -> Scene.setScene(HomeScene.getInstance()));
-        settingsPanel.add(backButton.getComponent());
+        settingsScene.add(backButton.getComponent());
 
-        Window.setContentPane(settingsPanel);
+        Window.changeScene(settingsScene);
     }
 
     private void setDropdownSelection() {
@@ -70,13 +70,7 @@ public class SettingsScene extends Scene {
         ScreenSizesEnum selectedEnum = ScreenSizesEnum.fromDimension(currentDimension);
 
         if (selectedEnum != null) {
-            System.out.println(selectedEnum);
-
-            int index = selectedEnum.ordinal();
-
-            System.out.println(index);
-
-            resolutionDropdown.setSelectedIndex(index);
+            resolutionDropdown.setSelectedIndex(selectedEnum.ordinal());
         }
     }
 
